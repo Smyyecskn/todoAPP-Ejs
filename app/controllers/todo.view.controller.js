@@ -16,7 +16,7 @@ module.exports = {
   list: async (req, res) => {
     // const data = await Todo.findAll()
     const data = await Todo.findAndCountAll({
-      order: [["id", "desc"]],
+      order: [["id", "asc"]], //default:asc
     });
     // console.log(data.rows)
 
