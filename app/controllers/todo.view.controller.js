@@ -15,7 +15,9 @@ const PRIORITY = {
 module.exports = {
   list: async (req, res) => {
     // const data = await Todo.findAll()
-    const data = await Todo.findAndCountAll();
+    const data = await Todo.findAndCountAll({
+      order: [["id", "desc"]],
+    });
     // console.log(data.rows)
 
     // res.status(200).send({
@@ -41,7 +43,7 @@ module.exports = {
     //     result: data.dataValues
     // })
 
-    console.log(req.method);
+    // console.log(req.method)
 
     if (req.method == "POST") {
       // CREATE:
@@ -68,23 +70,43 @@ module.exports = {
     // const data = await Todo.findOne({ where: { id: req.params.id } })
     const data = await Todo.findByPk(req.params.id);
 
-    res.status(200).send({
-      error: false,
-      result: data,
-    });
+    // res.status(200).send({
+    //     error: false,
+    //     result: data
+    // })
+
+    // console.log(data.dataValues)
+    res.render("todoRead", { todo: data.dataValues, priority: PRIORITY });
   },
 
   update: async (req, res) => {
     // const data = await Todo.update({ ...newData }, { ...where })
-    const data = await Todo.update(req.body, { where: { id: req.params.id } });
+    // const data = await Todo.update(req.body, { where: { id: req.params.id } })
 
-    res.status(202).send({
-      error: false,
-      message: "Updated",
-      body: req.body, // Gönderdiğim veriyi göster.
-      result: data,
-      new: await Todo.findByPk(req.params.id), // Güncellenmiş veriyi de göster.
-    });
+    // res.status(202).send({
+    //     error: false,
+    //     message: 'Updated',
+    //     body: req.body, // Gönderdiğim veriyi göster.
+    //     result: data,
+    //     new: await Todo.findByPk(req.params.id) // Güncellenmiş veriyi de göster.
+    // })
+
+    if (req.method == "POST") {
+      // UPDATE:
+
+      const data = await Todo.update(req.body, {
+        where: { id: req.params.id },
+      });
+
+      res.redirect("/view");
+    } else {
+      // VIEW:
+
+      const data = await Todo.findByPk(req.params.id);
+
+      // Form View:
+      res.render("todoUpdate", { todo: data.dataValues, priority: PRIORITY });
+    }
   },
 
   delete: async (req, res) => {
@@ -103,7 +125,13 @@ module.exports = {
       // Silme gerçekleşti ise:
       // res.status(204).send()
       //? Sadece status çıktı ver:
-      res.sendStatus(204);
+      // res.sendStatus(204)
+
+      res.redirect("/view");
+
+      // Yönlendirme çalışmaz ise:
+      // res.writeHead(302, {'Location': '/view'});
+      // res.end();
     } else {
       // Silme gerçekleşmedi ise:
       // res.status(404).send({

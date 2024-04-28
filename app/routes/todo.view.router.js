@@ -22,5 +22,8 @@ router.get("/", todo.list);
 // router.post("/create", todo.create); //form gönderme
 
 router.all("/create", todo.create); //2si bir arada view +send
+router.all("/:id", todo.create);
+router.all("/:id/update", todo.create);
+router.all("/:id/delete", todo.create);
 
 module.exports = router;
